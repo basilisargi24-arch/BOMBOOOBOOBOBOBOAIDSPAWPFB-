@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aternos 24/7 Bot</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        text-align: center;
+        background-color: #ffffff;
+        border: 1px solid #e1e1e1;
+        border-radius: 8px;
+        padding: 24px 32px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        max-width: 480px;
+      }
+
+      h1 {
+        color: #007bff;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        color: #555555;
+        font-size: 1.05rem;
+        min-height: 1.5em;
+      }
+
+      .buttons {
+        margin-top: 16px;
+      }
+
+      button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        transition: background-color 0.2s ease-in-out;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      button.stop {
+        background-color: #dc3545;
+      }
+
+      button.stop:hover {
+        background-color: #a71d2a;
+      }
+
+      button.reconnect {
+        background-color: #28a745;
+      }
+
+      button.reconnect:hover {
+        background-color: #1c7430;
+      }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Aternos 24/7 Bot</h1>
+      <h2 id="botStatus">Connecting...</h2>
+
+      <div class="buttons">
+        <button onclick="startBot()">Start Bot</button>
+        <button class="stop" onclick="stopBot()">Stop Bot</button>
+        <button class="reconnect" onclick="reconnectBot()">Reconnect Bot</button>
+      </div>
+    </div>
+
+    <script>
+      const socket = io();
+
+      socket.on('connect', () => {
+        console.log('Connected to control server.');
+      });
+
+      socket.on('bot_status', (msg) => {
+        const statusElement = document.getElementById('botStatus');
+        if (statusElement) {
+          statusElement.innerText = msg;
+        }
+      });
+
+      function startBot() {
+        socket.emit('control_bot', 'start');
+      }
+
+      function stopBot() {
+        socket.emit('control_bot', 'stop');
+      }
+
+      function reconnectBot() {
+        socket.emit('control_bot', 'reconnect');
+      }
+
+      // Auto-start bot once on first page load
+      window.addEventListener('load', () => {
+        socket.emit('control_bot', 'start');
+      });
+    </script>
+  </body>
+</html>
